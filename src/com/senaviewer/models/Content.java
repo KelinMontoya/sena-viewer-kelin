@@ -1,26 +1,30 @@
 package com.senaviewer.models;
 
 public abstract class Content {
-    private String id;
-    private String title;
-    private int durationSeconds; // duración en segundos
 
-    public Content(String id, String title, int durationSeconds) {
-        this.id = id;
+    protected String title;
+    protected int duration;
+    private String id;
+
+    public Content(String title, int duration) {
         this.title = title;
-        this.durationSeconds = durationSeconds;
+        this.duration = duration;
+        this.id = String.valueOf(System.currentTimeMillis());
     }
 
-    public String getId() { return id; }
-    public String getTitle() { return title; }
-    public int getDurationSeconds() { return durationSeconds; }
+    public String getTitle() {
+        return title;
+    }
 
-    public void setTitle(String title) { this.title = title; }
-    public void setDurationSeconds(int durationSeconds) { this.durationSeconds = durationSeconds; }
+    public int getDuration() {
+        return duration;
+    }
 
-    public abstract void showSpecs();
+    public String getId() {
+        return id;
+    }
 
-    public void play() {
-        System.out.println("Reproduciendo: " + title + " (" + durationSeconds + "s)");
+    public void showSpecs() {
+        System.out.println(this.toString());
     }
 }
