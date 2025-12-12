@@ -5,10 +5,11 @@ import com.senaviewer.models.Content;
 public class Player {
     private Content current;
 
-    public void play(Content c) {
-        current = c;
+    public void play(Content content) {
+    System.out.println("▶ Reproduciendo: " + content.getTitle());
+        current = content;
         System.out.println("--- Player: Iniciando reproducción ---");
-        c.play();
+        content.play();
         System.out.println("--- Player: Fin ---\n");
     }
 

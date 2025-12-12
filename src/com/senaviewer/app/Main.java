@@ -1,4 +1,4 @@
-package com.senaviewer;
+package com.senaviewer.app;
 
 import com.senaviewer.models.*;
 import com.senaviewer.player.Player;
