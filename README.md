@@ -3,7 +3,7 @@
 Mini-aplicación de consola en Java que simula la reproducción de contenidos multimedia.
 
 ## Integrante
-- Tu Nombre — Desarrollador / Documentación / Git
+- Kelin Montoya — Desarrollador / Documentación / Git
 
 ## Estructura del proyecto
 (ver carpeta `src`)
