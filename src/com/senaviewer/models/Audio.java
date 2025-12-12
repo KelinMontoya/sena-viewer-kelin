@@ -1,18 +1,16 @@
 package com.senaviewer.models;
 
 public class Audio extends Content {
-    private int bitrate; // kbps
 
-    public Audio(String id, String title, int durationSeconds, int bitrate) {
-        super(id, title, durationSeconds);
-        this.bitrate = bitrate;
+    private String artist;
+
+    public Audio(String title, int duration, String artist) {
+        super(title, duration);
+        this.artist = artist;
     }
 
-    public int getBitrate() { return bitrate; }
-    public void setBitrate(int bitrate) { this.bitrate = bitrate; }
-
     @Override
-    public void showSpecs() {
-        System.out.println("[Audio] " + getTitle() + " - " + bitrate + "kbps - " + getDurationSeconds() + "s");
+    public String toString() {
+        return "Audio: " + title + " | Duración: " + duration + " min | Artista: " + artist;
     }
 }
