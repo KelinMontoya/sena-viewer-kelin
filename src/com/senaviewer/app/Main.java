@@ -1,61 +1,145 @@
 package com.senaviewer.app;
 
-import com.senaviewer.models.*;
+import com.senaviewer.models.Audio;
+import com.senaviewer.models.Video;
+import com.senaviewer.models.Content;
+import com.senaviewer.models.Playlist;
 import com.senaviewer.player.Player;
-import com.senaviewer.utils.ConsoleUtils;
+import com.senaviewer.utils.ContentService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("Bienvenido a SENA Viewer (Consola)");
 
-        // datos de ejemplo
-        Video v1 = new Video("v001","Introducción a Java", 300, "1920x1080");
-        Audio a1 = new Audio("a001","Podcast: Arquitectura", 1800, 128);
-
-        User user = new User("estudiante");
-        user.createPlaylist("Favoritos");
-        Playlist fav = user.findPlaylist("Favoritos");
-        fav.add(v1);
-        fav.add(a1);
-
+        Scanner sc = new Scanner(System.in);
+        ContentService service = new ContentService();
+        List<Playlist> playlists = new ArrayList<>();
         Player player = new Player();
 
-        boolean running = true;
-        while (running) {
-            System.out.println("\nMenu:\n1) Listar contenidos de Favoritos\n2) Reproducir item\n3) Agregar contenido de ejemplo (Video)\n4) Eliminar item por id\n5) Salir");
-            int opt = ConsoleUtils.readInt("Selecciona una opción");
+        int option;
 
-            switch (opt) {
-                case 1:
-                    fav.list();
-                    break;
-                case 2:
-                    fav.list();
-                    int idx = ConsoleUtils.readInt("Elige el número a reproducir") - 1;
-                    if (idx >= 0 && idx < fav.getItems().size()) {
-                        player.play(fav.getItems().get(idx));
-                    } else System.out.println("Índice inválido");
-                    break;
-                case 3:
-                    Video vx = new Video("v" + System.currentTimeMillis(),
-                            ConsoleUtils.readLine("Título"),
-                            ConsoleUtils.readInt("Duración (s)"),
-                            ConsoleUtils.readLine("Resolución"));
-                    fav.add(vx);
-                    System.out.println("Contenido añadido a Favoritos");
-                    break;
-                case 4:
-                    String idToRemove = ConsoleUtils.readLine("ID del contenido a eliminar (ej: v001)");
-                    boolean removed = fav.remove(idToRemove);
-                    System.out.println(removed ? "Eliminado" : "No se encontró el ID");
-                    break;
-                case 5:
-                    running = false; break;
-                default:
-                    System.out.println("Opción no válida");
+        do {
+            System.out.println("\n===== SENA VIEWER =====");
+            System.out.println("1. Agregar Video");
+            System.out.println("2. Agregar Audio");
+            System.out.println("3. Listar Contenidos");
+            System.out.println("4. Buscar contenido por título");
+            System.out.println("5. Reproducir contenido");
+            System.out.println("6. Crear Playlist");
+            System.out.println("7. Mostrar Playlists");
+            System.out.println("8. Salir");
+            System.out.print("Opción: ");
+
+            option = sc.nextInt();
+            sc.nextLine();
+
+            switch (option) {
+
+                case 1 -> {
+                    System.out.print("Título: ");
+                    String title = sc.nextLine();
+                    System.out.print("Duración: ");
+                    int duration = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Género: ");
+                    String genre = sc.nextLine();
+
+                    Video video = new Video(title, duration, genre);
+                    service.addContent(video);
+                }
+
+                case 2 -> {
+                    System.out.print("Título: ");
+                    String title = sc.nextLine();
+                    System.out.print("Duración: ");
+                    int duration = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Artista: ");
+                    String artist = sc.nextLine();
+
+                    Audio audio = new Audio(title, duration, artist);
+                    service.addContent(audio);
+                }
+
+                case 3 -> {
+                    System.out.println("\n--- CONTENIDOS REGISTRADOS ---");
+                    service.getAll().forEach(System.out::println);
+                }
+
+                case 4 -> {
+                    System.out.print("Ingrese el título a buscar: ");
+                    String title = sc.nextLine();
+
+                    Content found = service.searchByTitle(title);
+
+                    if (found != null) System.out.println("Encontrado: " + found);
+                    else System.out.println("❌ No se encontró contenido");
+                }
+
+                case 5 -> {
+                    System.out.print("Título del contenido a reproducir: ");
+                    String title = sc.nextLine();
+
+                    Content content = service.searchByTitle(title);
+
+                    if (content != null) player.play(content);
+                    else System.out.println("❌ No existe ese contenido");
+                }
+
+                case 6 -> {
+                    System.out.print("Nombre de la playlist: ");
+                    String name = sc.nextLine();
+
+                    Playlist playlist = new Playlist(name);
+
+                    String addMore;
+                    do {
+                        System.out.print("Agregar título de contenido: ");
+                        String title = sc.nextLine();
+
+                        Content content = service.searchByTitle(title);
+                        if (content != null) {
+                            playlist.add(content);
+                            System.out.println("✔ Agregado a la playlist");
+                        } else {
+                            System.out.println("❌ No encontrado");
+                        }
+
+                        System.out.print("¿Agregar otro? (s/n): ");
+                        addMore = sc.nextLine();
+
+                    } while (addMore.equalsIgnoreCase("s"));
+
+                    playlists.add(playlist);
+                    System.out.println("🎵 Playlist creada correctamente.");
+                }
+
+                case 7 -> {
+                    System.out.println("\n--- PLAYLISTS ---");
+                    if (playlists.isEmpty()) {
+                        System.out.println("No hay playlists creadas.");
+                    } else {
+                        playlists.forEach(System.out::println);
+                    }
+                }
+
+                case 8 -> {
+                    System.out.println("Saliendo del sistema...");
+                }
+
+                default -> System.out.println("Opción no válida.");
             }
-        }
 
-        System.out.println("Gracias por usar SENA Viewer. Hasta luego!");
+        } while (option != 8);
+
+        sc.close();
     }
+
 }
+
+
+
